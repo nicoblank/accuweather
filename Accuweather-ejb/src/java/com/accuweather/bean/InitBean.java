@@ -5,17 +5,19 @@
  */
 package com.accuweather.bean;
 
+import com.accuweather.domain.Location;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.LocalBean;
 import javax.ejb.Startup;
 import javax.json.JsonArray;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 
 /**
  *
@@ -26,8 +28,7 @@ import javax.ws.rs.core.MediaType;
 @LocalBean
 public class InitBean {
     
-    @PersistenceContext
-    private EntityManager em;
+
     
     @PostConstruct
     public void init() {
@@ -36,12 +37,37 @@ public class InitBean {
          
         Client client;
         WebTarget target;
-            
+        //Location location;
+        String region,regionCode;
+        RegionBean regionBean = new RegionBean();
+        Gson transformer = new GsonBuilder().create();        
+                
         client = ClientBuilder.newClient();
-        //example query params: ?q=Turku&cnt=10&mode=json&units=metric
+        
         target = client.target("http://dataservice.accuweather.com/locations/v1/regions?apikey=NRz3StKqlddelC62eyhr6XWrPmFMLdXM");
         
-        JsonArray response = target.request(MediaType.APPLICATION_JSON).get(JsonArray.class);
-        System.out.println(response);
+        JsonArray responseRegiones = target.request(MediaType.APPLICATION_JSON).get(JsonArray.class);
+        //System.out.println(responseRegiones);
+        
+        
+        for(int i = 0 ; i < responseRegiones.size(); i++){
+            
+            regionBean = transformer.fromJson(responseRegiones.getJsonObject(i).toString(), RegionBean.class);
+            //System.out.println(regionBean.getID());      
+            regionCode = regionBean.getID();//responseRegiones.getJsonObject(i).get("ID").toString();
+            region = regionBean.getLocalizedName();//responseRegiones.getJsonObject(i).get("LocalizedName").toString();
+            
+            target = client.target("http://dataservice.accuweather.com/locations/v1/countries/" + regionCode + "?apikey=NRz3StKqlddelC62eyhr6XWrPmFMLdXM");
+            
+            JsonArray responsePaises = target.request(MediaType.APPLICATION_JSON).get(JsonArray.class);
+            System.out.println(responsePaises);
+           
+            //region_code = response.LocalizedName
+            //LocationDto locationDto = new LocationDto();
+            //locationDto.setArea(area);
+            //.setName("José Mauro de Vasconcelos");
+            //AuthorDto zeze = authorBean.createAuthor(authorDto);
+        }
+             
     }
 }
