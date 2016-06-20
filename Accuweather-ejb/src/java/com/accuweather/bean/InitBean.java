@@ -5,7 +5,6 @@
  */
 package com.accuweather.bean;
 
-import com.accuweather.domain.Location;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.LocalBean;
@@ -17,6 +16,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import javax.ejb.EJB;
 
 
 /**
@@ -28,7 +28,8 @@ import com.google.gson.GsonBuilder;
 @LocalBean
 public class InitBean {
     
-
+    @EJB
+    private LocationBean locationBean;
     
     @PostConstruct
     public void init() {
@@ -37,11 +38,13 @@ public class InitBean {
          
         Client client;
         WebTarget target;
-        //Location location;
-        String region,regionCode;
+        LocationDto locationDto;
+        String region,regionCode,pais,paisCode,ciudad,ciudadCode;
         RegionBean regionBean = new RegionBean();
-        Gson transformer = new GsonBuilder().create();        
-                
+        PaisBean paisBean = new PaisBean();
+        CiudadBean ciudadBean = new CiudadBean();
+        Gson transformer = new GsonBuilder().create(); 
+            
         client = ClientBuilder.newClient();
         
         target = client.target("http://dataservice.accuweather.com/locations/v1/regions?apikey=NRz3StKqlddelC62eyhr6XWrPmFMLdXM");
@@ -53,14 +56,48 @@ public class InitBean {
         for(int i = 0 ; i < responseRegiones.size(); i++){
             
             regionBean = transformer.fromJson(responseRegiones.getJsonObject(i).toString(), RegionBean.class);
-            //System.out.println(regionBean.getID());      
-            regionCode = regionBean.getID();//responseRegiones.getJsonObject(i).get("ID").toString();
-            region = regionBean.getLocalizedName();//responseRegiones.getJsonObject(i).get("LocalizedName").toString();
+            
+            regionCode = regionBean.getID();
+            region = regionBean.getLocalizedName();
             
             target = client.target("http://dataservice.accuweather.com/locations/v1/countries/" + regionCode + "?apikey=NRz3StKqlddelC62eyhr6XWrPmFMLdXM");
             
             JsonArray responsePaises = target.request(MediaType.APPLICATION_JSON).get(JsonArray.class);
-            System.out.println(responsePaises);
+            
+            for(int j = 0 ; j < responsePaises.size(); j++){
+                paisBean = transformer.fromJson(responsePaises.getJsonObject(j).toString(), PaisBean.class);
+
+                paisCode = paisBean.getID();
+                pais = paisBean.getLocalizedName();
+
+                target = client.target("http://dataservice.accuweather.com/locations/v1/adminareas/" + paisCode + "?apikey=NRz3StKqlddelC62eyhr6XWrPmFMLdXM");
+
+                JsonArray responseCiudades = target.request(MediaType.APPLICATION_JSON).get(JsonArray.class);
+                
+                for(int k = 0 ; k < responseCiudades.size(); k++){
+                    ciudadBean = transformer.fromJson(responseCiudades.getJsonObject(k).toString(), CiudadBean.class);
+
+                    ciudadCode = ciudadBean.getID();
+                    ciudad = ciudadBean.getLocalizedName();
+                    
+                    locationDto = new LocationDto();
+                    
+                    locationDto.setRegion_code(regionCode);
+                    locationDto.setRegion(region);
+                    locationDto.setPais_code(paisCode);
+                    locationDto.setPais(pais);
+                    locationDto.setArea_code(ciudadCode);
+                    locationDto.setArea(ciudad);
+                    
+                    //System.out.println(locationDto.getArea());
+                    locationBean.createLocation(locationDto);          
+                    //System.out.println(locationDto.getArea());
+                    
+                }
+                
+                
+            }
+            //System.out.println(responsePaises);
            
             //region_code = response.LocalizedName
             //LocationDto locationDto = new LocationDto();

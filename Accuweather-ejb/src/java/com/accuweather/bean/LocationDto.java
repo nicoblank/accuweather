@@ -11,7 +11,7 @@ import javax.ejb.LocalBean;
 
 /**
  *
- * @author vero
+ * @author nico
  */
 @Stateless
 @LocalBean

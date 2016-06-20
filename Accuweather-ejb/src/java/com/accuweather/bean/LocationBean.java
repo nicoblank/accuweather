@@ -24,6 +24,9 @@ public class LocationBean {
     private EntityManager em;
     
     public void createLocation(LocationDto dto) {
+        
+        //System.out.println(dto.getId());
+        System.out.println(dto.getPais());
         Location location = toEntity(dto);
         em.persist(location);
         //return toDto(location);
@@ -40,7 +43,14 @@ public class LocationBean {
     */
     private Location toEntity(LocationDto dto) {
         Location entity = new Location();
-        //entity.setName(dto.getName());
+        
+        entity.setRegion_code(dto.getRegion_code());
+        entity.setRegion(dto.getRegion());
+        entity.setPais_code(dto.getPais_code());
+        entity.setPais(dto.getPais());
+        entity.setArea_code(dto.getArea_code());
+        entity.setArea(dto.getArea());
+        
         return entity;
     }
     

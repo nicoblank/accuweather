@@ -14,8 +14,8 @@ import javax.ejb.LocalBean;
  */
 @Stateless
 @LocalBean
-public class RegionBean {
-
+public class PaisBean {
+    
     private String ID;
     private String LocalizedName;
     private String EnglishName;
@@ -46,4 +46,5 @@ public class RegionBean {
 
     
     
+
 }

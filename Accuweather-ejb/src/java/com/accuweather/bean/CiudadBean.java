@@ -10,16 +10,21 @@ import javax.ejb.LocalBean;
 
 /**
  *
- * @author nico
+ * @author vero
  */
 @Stateless
 @LocalBean
-public class RegionBean {
-
+public class CiudadBean {
+    
     private String ID;
     private String LocalizedName;
     private String EnglishName;
-
+    private String Level;
+    private String LocalizedType;
+    private String EnglishType;
+    private String CountryID;
+    
+   
     public String getID() {
         return ID;
     }
@@ -30,6 +35,22 @@ public class RegionBean {
 
     public String getEnglishName() {
         return EnglishName;
+    }
+
+    public String getLevel() {
+        return Level;
+    }
+
+    public String getLocalizedType() {
+        return LocalizedType;
+    }
+
+    public String getEnglishType() {
+        return EnglishType;
+    }
+
+    public String getCountryID() {
+        return CountryID;
     }
 
     public void setID(String ID) {
@@ -44,6 +65,20 @@ public class RegionBean {
         this.EnglishName = EnglishName;
     }
 
-    
-    
+    public void setLevel(String Level) {
+        this.Level = Level;
+    }
+
+    public void setLocalizedType(String LocalizedType) {
+        this.LocalizedType = LocalizedType;
+    }
+
+    public void setEnglishType(String EnglishType) {
+        this.EnglishType = EnglishType;
+    }
+
+    public void setCountryID(String CountryID) {
+        this.CountryID = CountryID;
+    }
+
 }
