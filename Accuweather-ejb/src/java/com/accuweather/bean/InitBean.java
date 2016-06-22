@@ -46,13 +46,10 @@ public class InitBean {
         Gson transformer = new GsonBuilder().create(); 
             
         client = ClientBuilder.newClient();
-        //System.out.println("0000000000000000000");
+        
         target = client.target("http://dataservice.accuweather.com/locations/v1/regions?apikey=UgipgbtgQCzFDQvsCHCpmlE3s0UDH5nG");
         
         JsonArray responseRegiones = target.request(MediaType.APPLICATION_JSON).get(JsonArray.class);
-        //System.out.println(responseRegiones);
-        
-        //System.out.println("111111111111111111");
         
         for(int i = 0 ; i < /*responseRegiones.size()*/1; i++){
             
@@ -65,7 +62,6 @@ public class InitBean {
             
             JsonArray responsePaises = target.request(MediaType.APPLICATION_JSON).get(JsonArray.class);
             
-            //System.out.println("2222222222222222");
 
             for(int j = 0 ; j < responsePaises.size(); j++){
                 paisBean = transformer.fromJson(responsePaises.getJsonObject(j).toString(), PaisBean.class);
@@ -76,7 +72,7 @@ public class InitBean {
                 target = client.target("http://dataservice.accuweather.com/locations/v1/adminareas/" + paisCode + "?apikey=UgipgbtgQCzFDQvsCHCpmlE3s0UDH5nG");
 
                 JsonArray responseCiudades = target.request(MediaType.APPLICATION_JSON).get(JsonArray.class);
-                //System.out.println("33333333333333333");
+               
 
                 for(int k = 0 ; k < responseCiudades.size(); k++){
                     ciudadBean = transformer.fromJson(responseCiudades.getJsonObject(k).toString(), CiudadBean.class);
@@ -93,12 +89,10 @@ public class InitBean {
                     locationDto.setArea_code(ciudadCode);
                     locationDto.setArea(ciudad);
                     
-                    //System.out.println("44444444444444444444");
-
+                   
                     System.out.println(locationDto.getArea());
                     locationBean.createLocation(locationDto);          
-                    //System.out.println(locationDto.getArea());
-                    
+                                        
                 }
                 
                 
