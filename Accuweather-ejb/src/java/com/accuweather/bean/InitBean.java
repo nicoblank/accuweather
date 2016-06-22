@@ -46,34 +46,38 @@ public class InitBean {
         Gson transformer = new GsonBuilder().create(); 
             
         client = ClientBuilder.newClient();
-        
-        target = client.target("http://dataservice.accuweather.com/locations/v1/regions?apikey=NRz3StKqlddelC62eyhr6XWrPmFMLdXM");
+        //System.out.println("0000000000000000000");
+        target = client.target("http://dataservice.accuweather.com/locations/v1/regions?apikey=UgipgbtgQCzFDQvsCHCpmlE3s0UDH5nG");
         
         JsonArray responseRegiones = target.request(MediaType.APPLICATION_JSON).get(JsonArray.class);
         //System.out.println(responseRegiones);
         
+        //System.out.println("111111111111111111");
         
-        for(int i = 0 ; i < responseRegiones.size(); i++){
+        for(int i = 0 ; i < /*responseRegiones.size()*/1; i++){
             
             regionBean = transformer.fromJson(responseRegiones.getJsonObject(i).toString(), RegionBean.class);
             
-            regionCode = regionBean.getID();
-            region = regionBean.getLocalizedName();
+            regionCode = "NAM";//regionBean.getID();
+            region = "North America";//regionBean.getLocalizedName();
             
-            target = client.target("http://dataservice.accuweather.com/locations/v1/countries/" + regionCode + "?apikey=NRz3StKqlddelC62eyhr6XWrPmFMLdXM");
+            target = client.target("http://dataservice.accuweather.com/locations/v1/countries/" + regionCode + "?apikey=UgipgbtgQCzFDQvsCHCpmlE3s0UDH5nG");
             
             JsonArray responsePaises = target.request(MediaType.APPLICATION_JSON).get(JsonArray.class);
             
+            //System.out.println("2222222222222222");
+
             for(int j = 0 ; j < responsePaises.size(); j++){
                 paisBean = transformer.fromJson(responsePaises.getJsonObject(j).toString(), PaisBean.class);
 
                 paisCode = paisBean.getID();
                 pais = paisBean.getLocalizedName();
 
-                target = client.target("http://dataservice.accuweather.com/locations/v1/adminareas/" + paisCode + "?apikey=NRz3StKqlddelC62eyhr6XWrPmFMLdXM");
+                target = client.target("http://dataservice.accuweather.com/locations/v1/adminareas/" + paisCode + "?apikey=UgipgbtgQCzFDQvsCHCpmlE3s0UDH5nG");
 
                 JsonArray responseCiudades = target.request(MediaType.APPLICATION_JSON).get(JsonArray.class);
-                
+                //System.out.println("33333333333333333");
+
                 for(int k = 0 ; k < responseCiudades.size(); k++){
                     ciudadBean = transformer.fromJson(responseCiudades.getJsonObject(k).toString(), CiudadBean.class);
 
@@ -89,7 +93,9 @@ public class InitBean {
                     locationDto.setArea_code(ciudadCode);
                     locationDto.setArea(ciudad);
                     
-                    //System.out.println(locationDto.getArea());
+                    //System.out.println("44444444444444444444");
+
+                    System.out.println(locationDto.getArea());
                     locationBean.createLocation(locationDto);          
                     //System.out.println(locationDto.getArea());
                     
@@ -97,13 +103,7 @@ public class InitBean {
                 
                 
             }
-            //System.out.println(responsePaises);
-           
-            //region_code = response.LocalizedName
-            //LocationDto locationDto = new LocationDto();
-            //locationDto.setArea(area);
-            //.setName("José Mauro de Vasconcelos");
-            //AuthorDto zeze = authorBean.createAuthor(authorDto);
+      
         }
              
     }
